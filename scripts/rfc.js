@@ -63,7 +63,7 @@ function calcularProductoFinal(serieNumerica_valor) {
     return sumaProducto;
 }
 
-function calcularHomoclaveDigito1y2(producto_Final) {
+function calcularHomoclave(producto_Final) {
     const ultimos3 = producto_Final.toString().slice(-3);
     const dividendo = Number(ultimos3);
     const cociente = Math.floor(dividendo / 34);
@@ -115,6 +115,12 @@ form.addEventListener('submit', (e) => {
     const apellido_p = apellido_p_input.value.toUpperCase().trim();
     const nombres = nombre_input.value.toUpperCase().trim();
     const fechaNacimiento = fecha.value;
+
+    if (nombres === '' || fechaNacimiento === '') {
+        alert('Falta su nombre o fecha de nacimiento')
+        return;
+    };
+    
     let apellido_m_rfc = apellido_m.slice(0, 2);
     let apellido_p_rfc = apellido_p.slice(0, 1);
     let nombres_rfc = nombres.slice(0, 1);
@@ -142,42 +148,43 @@ form.addEventListener('submit', (e) => {
     };
 
     if ((nombres.slice(0, 4) === 'JOSE' || nombres.slice(0, 4) === 'JUAN') && nombres.length > 4) {
-    nombres_rfc = nombres.slice(5);
-    nombres_rfc = nombres_rfc.slice(0, 1);
-};
+        nombres_rfc = nombres.slice(5);
+        nombres_rfc = nombres_rfc.slice(0, 1);
+    };
 
-if (nombres.slice(0, 3) === 'MA.' && nombres.length > 3) {
-    nombres_rfc = nombres.slice(4);
-    nombres_rfc = nombres_rfc.slice(0, 1);
-};
+    if (nombres.slice(0, 3) === 'MA.' && nombres.length > 3) {
+        nombres_rfc = nombres.slice(4);
+        nombres_rfc = nombres_rfc.slice(0, 1);
+    };
 
-if (apellido_m === '') {
-    apellido_p_rfc = apellido_p.slice(0, 2);
-    nombres_rfc = nombres.slice(0, 2);
-}
+    if (apellido_m === '') {
+        apellido_p_rfc = apellido_p.slice(0, 2);
+        nombres_rfc = nombres.slice(0, 2);
+    }
 
-if (apellido_p === '') {
-    apellido_m_rfc = apellido_m.slice(0, 2);
-    nombres_rfc = nombres.slice(0, 2);
-}
+    if (apellido_p === '') {
+        apellido_m_rfc = apellido_m.slice(0, 2);
+        nombres_rfc = nombres.slice(0, 2);
+    }
 
-const año = fechaNacimiento.slice(2, 4);
-const mes = fechaNacimiento.slice(5, 7);
-const dia = fechaNacimiento.slice(8, 10);
-const nombreCompleto = `${apellido_m} ${apellido_p} ${nombres}`;
+    const año = fechaNacimiento.slice(2, 4);
+    const mes = fechaNacimiento.slice(5, 7);
+    const dia = fechaNacimiento.slice(8, 10);
 
-const serieNumerica = calcularSerieNumerica(nombreCompleto);
-const productoFinal = calcularProductoFinal(serieNumerica);
-const { homoclaveDigito1, homoclaveDigito2 } = calcularHomoclaveDigito1y2(productoFinal);
-let rfcPrimerasLetras = apellido_m_rfc + apellido_p_rfc + nombres_rfc;
+    const nombreCompleto = `${apellido_m} ${apellido_p} ${nombres}`;
 
-if (rfcPrimerasLetras in anexoPalabrasInconvenientes) {
-    rfcPrimerasLetras = anexoPalabrasInconvenientes[rfcPrimerasLetras];
-};
+    const serieNumerica = calcularSerieNumerica(nombreCompleto);
+    const productoFinal = calcularProductoFinal(serieNumerica);
+    const { homoclaveDigito1, homoclaveDigito2 } = calcularHomoclave(productoFinal);
+    let rfcPrimerasLetras = apellido_m_rfc + apellido_p_rfc + nombres_rfc;
 
-const rfcIncompleto = rfcPrimerasLetras + año + mes + dia + homoclaveDigito1 + homoclaveDigito2;
-const serieNumericaRFC = calcularSerieNumericaRFC(rfcIncompleto);
-const digitoVerificador = calcularDigitoVerificador(serieNumericaRFC, rfcIncompleto);
-const rfc = rfcIncompleto + String(digitoVerificador);
-hRFC.textContent = `${rfc}`
+    if (rfcPrimerasLetras in anexoPalabrasInconvenientes) {
+        rfcPrimerasLetras = anexoPalabrasInconvenientes[rfcPrimerasLetras];
+    };
+
+    const rfcIncompleto = rfcPrimerasLetras + año + mes + dia + homoclaveDigito1 + homoclaveDigito2;
+    const serieNumericaRFC = calcularSerieNumericaRFC(rfcIncompleto);
+    const digitoVerificador = calcularDigitoVerificador(serieNumericaRFC, rfcIncompleto);
+    const rfc = rfcIncompleto + String(digitoVerificador);
+    hRFC.textContent = `${rfc}`
 });
